@@ -7,12 +7,13 @@
  * BMP180 temperature and pressure sensor.
  * Usually uses address 0x77.
  * 1. Define macro for your MCU
- * 2. Allocate BMP180 structure
- * 3. Call bmp180_init to initialize BMP180 structure. This checks if sensor is 
+ * 2. Include i2c library from this repository
+ * 3. Allocate BMP180 structure
+ * 4. Call bmp180_init to initialize BMP180 structure. This checks if sensor is 
  *    present, resets it and fetches calibration data.
- * 4. Call bmp180_set_oversampling to change oversampling setting.
- * 5. Call bmp180_get_temperature. This fills fields ut and temperature in BMP180 structure.
- * 6. Call bmp180_get_pressure. Uses results of bmp180_get_temperature.
+ * 5. Call bmp180_set_oversampling to change oversampling setting.
+ * 6. Call bmp180_get_temperature. This fills fields ut and temperature in BMP180 structure.
+ * 7. Call bmp180_get_pressure. Uses results of bmp180_get_temperature.
  *    This fills fields up and pressure in BMP180 structure.
  */
 
@@ -73,15 +74,19 @@ typedef struct {
 
 
 /**
- * @brief Initialize BMP180 structure
+ * @brief  Initializes the BMP180 sensor and its internal state structure.
  *
- * Initializes structure with i2c handler and sensor address, checks chip id,
- * sends soft reset signal, fetches calibration data
+ * This function performs the complete sensor startup sequence:
+ * 1. Links the I2C peripheral and device address to the handle.
+ * 2. Verifies the Chip ID (0x55) to ensure communication is established.
+ * 3. Triggers a soft reset to clear internal registers.
+ * 4. Reads factory-programmed calibration coefficients from the sensor's EEPROM.
  *
- * @param BMP180 *: pointer to allocated structure, it will be initialized during call
- * @param I2C_HandleTypeDef *: pointer to I2C handle
- * @param uint16_t: device address, usually 0x77
- * @return BMP180_STATUS
+ * @param[out] bmp180   Pointer to the BMP180 handle structure to be initialized.
+ * @param[in]  i2c_bus  Pointer to the hardware-specific I2C bus handle.
+ * @param[in]  addr     The 7-bit I2C device address (typically 0x77).
+ *
+ * @return BMP180_STATUS  Status code indicating success or specific error
  */
 #if defined(STM32)
 BMP180_STATUS bmp180_init(BMP180 *bmp180, I2C_HandleTypeDef *i2c_bus, const uint16_t addr);
@@ -92,22 +97,42 @@ BMP180_STATUS bmp180_init(BMP180 *bmp180, i2c_master_bus_handle_t *i2c_bus, cons
 #endif
 
 
-/**
- * @brief Changes oversampling setting
+ /**
+ * @brief  Configures the oversampling setting (OSS) for pressure measurements.
  *
- * @param BMP180 *: pointer to allocated and initialized structure
- * @param BMP180_OSS: oversampling setting. Possible values: 
- *                    BMP180_OSS_SINGLE, BMP180_OSS_DOUBLE, BMP180_OSS_QUAD, BMP180_OSS_OCT
+ * This function updates the internal handle with the desired oversampling ratio.
+ * Higher oversampling values increase measurement precision and reduce noise, 
+ * but require more time and power to complete a conversion.
+ * @note   This function only updates the internal configuration within the 
+ * @ref BMP180 structure. The setting is not sent to the sensor immediately; 
+ * it is applied later during the actual pressure measurement sequence.
+ *
+ * @param[in,out] bmp180  Pointer to the BMP180 handle structure.
+ * @param[in]     oss     The oversampling setting to be applied.
+ * Supported values:
+ * - @ref BMP180_OSS_SINGLE: Ultra low power (1 internal sample)
+ * - @ref BMP180_OSS_DOUBLE: Standard (2 internal samples)
+ * - @ref BMP180_OSS_QUAD:   High resolution (4 internal samples)
+ * - @ref BMP180_OSS_OCT:    Ultra high resolution (8 internal samples)
+ *
  * @return BMP180_STATUS
  */
 BMP180_STATUS bmp180_set_oversampling(BMP180 *bmp180, const BMP180_OSS oss);
 
 
 /**
- * @brief Reads uncompensated temperature and calculates temperature in 0.1 degrees Celsius
+ * @brief  Performs a complete temperature measurement cycle.
  *
- * Fills fields ut and temperature in the structure. ut is the raw value of output registers. 
- * temperature is real temperature value in 0.1 deg. Celsius, calculated using internal calibration data
+ * This function triggers the sensor to start a temperature conversion, waits for 
+ * the hardware to complete the measurement, reads the raw data from the output 
+ * registers, and finally calculates the real-world temperature.
+ *
+ * @note The resulting temperature is stored in the @p bmp180 structure with 
+ * a resolution of 0.1 deg. Celsius.
+ *
+ * @param[in,out] bmp180  Pointer to the BMP180 handle structure. 
+ * The 'ut' (raw) and 'temperature' (compensated) 
+ * fields will be updated.
  *
  * @return BMP180_STATUS
  */
@@ -115,10 +140,19 @@ BMP180_STATUS bmp180_get_temperature(BMP180 *bmp180);
 
 
 /**
- * @brief Reads uncompensated pressure and calculates pressure in Pa
+ * @brief  Performs a complete pressure measurement cycle.
  *
- * Fills fields up and pressure in the structure. up is the raw value of output registers. 
- * pressure is real pressure value in Pa, calculated using internal calibration data
+ * This function triggers the sensor to start a pressure conversion using the 
+ * current oversampling setting (OSS), waits for the conversion to finish, 
+ * reads the raw data (UP), and calculates the compensated pressure in Pascals.
+ *
+ * @note   Before calling this function, ensure that @ref bmp180_get_temperature 
+ * has been called, as the pressure compensation algorithm requires 
+ * the latest temperature compensation coefficients.
+ *
+ * @param[in,out] bmp180  Pointer to the BMP180 handle structure. 
+ * The 'up' (raw) and 'pressure' (compensated) 
+ * fields will be updated.
  *
  * @return BMP180_STATUS
  */
@@ -126,9 +160,14 @@ BMP180_STATUS bmp180_get_pressure(BMP180 *bmp180);
 
 
 /**
- * @brief Performs calls of bmp180_get_temperature and bmp180_get_pressure
+ * @brief  Performs a complete measurement cycle (Temperature and Pressure).
  *
- * Calculates temperature and pressure
+ * This is a convenience function that sequentially calls @ref bmp180_get_temperature 
+ * and @ref bmp180_get_pressure. It ensures that the temperature compensation 
+ * coefficients are updated before the pressure calculation.
+ *
+ * @param[in,out] bmp180  Pointer to the BMP180 handle structure. 
+ * All measurement fields (ut, up, temperature, pressure) will be updated
  *
  * @return BMP180_STATUS
  */

@@ -88,7 +88,12 @@ I2CStatus i2c_write(
     for (size_t ptr = 0; ptr < num_bytes; ptr++) {
         write_buf[ptr + 1] = buffer[ptr];
     }
-    const esp_err_t ret = i2c_master_transmit(dev_handle, write_buf, num_bytes + 1, timeout);
+    const esp_err_t ret = i2c_master_transmit(
+        dev_handle, 
+        write_buf, 
+        num_bytes + 1, 
+        timeout
+    );
     if (ret != ESP_OK) {
         return I2C_ERR;
     }

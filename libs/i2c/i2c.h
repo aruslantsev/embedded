@@ -65,17 +65,18 @@ typedef enum { I2C_OK = 0, I2C_ERR = 1 } I2CStatus;
 
 #if defined(STM32)
 
-/**
- * @brief Writes data to specified device at specified bus
+ /**
+ * @brief Writes data from an I2C device register.
  *
- * @param I2C_HandleTypeDef *handle: pointer i2c bus handle
- * @param uint16_t dev_address: device address
- * @param uint16_t mem_address: memory address (register)
- * @param uint8_t *buffer: buffer with data
- * @param uint16_t num_bytes: amount of data to be written
- * @param uint32_t timeout: timeout in ms
-
- * @return I2CStatus
+ * @param[in]  handle       I2C bus handle.
+ * @param[in]  dev_address  I2C slave device address.
+ * @param[in]  mem_address  Internal register address to start reading from.
+ * @param[out] buffer       Pointer to the buffer containing data to be sent.
+ * @param[in]  num_bytes    Number of bytes to read.
+ * @param[in]  timeout      Timeout.
+ *
+ * @retval 0                Success
+ * @retval 1                Failure
  */
 I2CStatus i2c_write(
     I2C_HandleTypeDef *handle, 
@@ -88,16 +89,17 @@ I2CStatus i2c_write(
 
 
 /**
- * @brief Reads data from specified device at specified bus
+ * @brief Reads data from an I2C device register.
  *
- * @param I2C_HandleTypeDef *handle: pointer i2c bus handle
- * @param uint16_t dev_address: device address
- * @param uint16_t mem_address: memory address (register)
- * @param uint8_t *buffer: buffer where data will be stored
- * @param uint16_t num_bytes: amount of data to be read
- * @param uint32_t timeout: timeout in ms
-
- * @return I2CStatus
+ * @param[in]  handle       I2C bus handle.
+ * @param[in]  dev_address  I2C slave device address.
+ * @param[in]  mem_address  Internal register address to start reading from.
+ * @param[in]  buffer       Pointer to the memory buffer to store the received data.
+ * @param[in]  num_bytes    Number of bytes to read.
+ * @param[in]  timeout      Timeout.
+ *
+ * @retval 0                Success
+ * @retval 1                Failure
  */
 I2CStatus i2c_read(
     I2C_HandleTypeDef *handle, 
@@ -113,16 +115,17 @@ I2CStatus i2c_read(
 #define WRITE_BUFFER_SIZE 255
 
 /**
- * @brief Writes data to specified device at specified bus
+ * @brief Writes data from an I2C device register.
  *
- * @param i2c_master_bus_handle_t *handle: pointer i2c bus handle
- * @param i2c_master_dev_handle_t dev_handle: device handle
- * @param uint16_t mem_address: memory address (register)
- * @param uint8_t *buffer: buffer with data
- * @param uint16_t num_bytes: amount of data to be written
- * @param uint32_t timeout: timeout in ms
-
- * @return I2CStatus
+ * @param[in]  handle       I2C bus handle.
+ * @param[in]  dev_handle   I2C slave device handle.
+ * @param[in]  mem_address  Internal register address to start reading from.
+ * @param[out] buffer       Pointer to the buffer containing data to be sent.
+ * @param[in]  num_bytes    Number of bytes to read.
+ * @param[in]  timeout      Timeout.
+ *
+ * @retval 0                Success
+ * @retval 1                Failure
  */
 I2CStatus i2c_write(
     i2c_master_bus_handle_t *handle, 
@@ -135,16 +138,17 @@ I2CStatus i2c_write(
 
 
 /**
- * @brief Reads data from specified device at specified bus
+ * @brief Reads data from an I2C device register.
  *
- * @param i2c_master_bus_handle_t *handle: pointer i2c bus handle
- * @param i2c_master_dev_handle_t dev_handle: device handle
- * @param uint16_t mem_address: memory address (register)
- * @param uint8_t *buffer: buffer where data will be stored
- * @param uint16_t num_bytes: amount of data to be read
- * @param uint32_t timeout: timeout in ms
-
- * @return I2CStatus
+ * @param[in]  handle       I2C bus handle.
+ * @param[in]  dev_handle   I2C slave device handle.
+ * @param[in]  mem_address  Internal register address to start reading from.
+ * @param[in]  buffer       Pointer to the memory buffer to store the received data.
+ * @param[in]  num_bytes    Number of bytes to read.
+ * @param[in]  timeout      Timeout.
+ *
+ * @retval 0                Success
+ * @retval 1                Failure
  */
 I2CStatus i2c_read(
     i2c_master_bus_handle_t *handle, 

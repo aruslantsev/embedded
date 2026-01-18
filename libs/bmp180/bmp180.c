@@ -3,18 +3,29 @@
 
 #if defined(STM32)
 /**
- * @brief Waits specified amount of time
+ * @brief  Provides a delay in milliseconds.
  *
- * @param uint32_t timeout: timeout in ms
+ * This function pauses the program execution for a specific amount of time.
+ *
+ * @param[in] timeout  Delay duration in milliseconds (ms).
+ *
+ * @return None
  */
 static void delay_ms(uint32_t timeout) {
     HAL_Delay(timeout);
 }
 #elif defined(ESP32)
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 /**
- * @brief Waits specified amount of time
+ * @brief  Provides a delay in milliseconds.
  *
- * @param uint32_t timeout: timeout in ms
+ * This function pauses the program execution for a specific amount of time.
+ *
+ * @param[in] timeout  Delay duration in milliseconds (ms).
+ *
+ * @return None
  */
 static void delay_ms(uint32_t timeout) {
     const TickType_t xDelay = timeout / portTICK_PERIOD_MS;
@@ -30,7 +41,7 @@ BMP180_STATUS bmp180_init(BMP180 *bmp180, I2C_HandleTypeDef *i2c_bus, const uint
 #elif defined(ESP32)
 BMP180_STATUS bmp180_init(BMP180 *bmp180, i2c_master_bus_handle_t *i2c_bus, const uint8_t addr) {
 #else
-#error
+#error No MCU defined
 #endif
     bmp180->i2c_bus = i2c_bus;
 #if defined(STM32)
@@ -46,7 +57,7 @@ BMP180_STATUS bmp180_init(BMP180 *bmp180, i2c_master_bus_handle_t *i2c_bus, cons
     if (ret != ESP_OK) return BMP180_READ_ERR;
     bmp180->addr = dev_handle;
 #else
-#error
+#error No MCU defined
 #endif
     bmp180->oss = 0;
     I2CStatus i2c_ret;
@@ -213,11 +224,18 @@ BMP180_STATUS bmp180_set_oversampling(BMP180 *bmp180, const BMP180_OSS oss) {
 }
 
 
-/**
- * @brief Calculates temperature using uncompensated temperature and calibration data
+ /**
+ * @brief  Calculates the compensated temperature from raw sensor data.
  *
- * @param BMP180 *: pointer to allocated and initialized structure
- * @return uint32_t real temperature
+ * This function applies the manufacturer's compensation formula using 
+ * the uncompensated (raw) temperature and the unique calibration 
+ * coefficients stored in the BMP180 structure.
+ *
+ * @param[in]     bmp180  Pointer to the BMP180 device handle structure 
+ * containing calibration data and raw readings.
+ *
+ * @return The compensated temperature in steps of 0.1 degrees Celsius.
+ * (e.g., a return value of 250 represents 25.0 °C).
  */
 static int32_t get_temp(BMP180 *bmp180) {
     int32_t x1 = ((bmp180->ut - bmp180->ac6) * bmp180->ac5) >> 15;
@@ -227,12 +245,20 @@ static int32_t get_temp(BMP180 *bmp180) {
 }
 
 
-/**
- * @brief Calculates pressure using uncompensated temperature, uncompensated pressure
- *        and calibration data
+ /**
+ * @brief  Calculates the compensated atmospheric pressure.
+ * 
+ * This function computes the real-world pressure value by applying 
+ * compensation algorithms using raw sensor data (uncompensated temperature 
+ * and pressure) and factory calibration coefficients stored in the device structure.
  *
-* @param BMP180 *: pointer to allocated and initialized structure
- * @return uint32_t real pressure
+ * @note   Ensure that raw data and calibration parameters are updated in the 
+ * structure before calling this function.
+ *
+ * @param[in]     bmp180  Pointer to the BMP180 device handle structure 
+ * containing calibration data and raw readings.
+ *
+ * @return The compensated pressure in Pascals (Pa).
  */
 static int32_t get_pressure(BMP180 *bmp180) {
     int32_t x1 = ((bmp180->ut - bmp180->ac6) * bmp180->ac5) >> 15;
