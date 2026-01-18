@@ -1,3 +1,14 @@
+/**
+ * @file i2c.c
+ * @brief Universal I2C master-mode driver for STM32 and ESP32 microcontrollers.
+ * @author Andrei Ruslantsev
+ * @copyright (c) 2026 Andrei Ruslantsev. All rights reserved.
+ * 
+ * This software is provided "as is", without warranty of any kind, express or
+ * implied, including but not limited to the warranties of merchantability,
+ * fitness for a particular purpose and noninfringement.
+ */
+
 #ifndef I2C_H
 #define I2C_H
 
