@@ -1,3 +1,14 @@
+/**
+ * @file hmc5883l.c
+ * @brief Driver implementation for the HMC5883L 3-Axis Digital Compass.
+ * @author Andrei Ruslantsev
+ * @copyright (c) 2026 Andrei Ruslantsev. All rights reserved.
+ * 
+ * This software is provided "as is", without warranty of any kind, express or
+ * implied, including but not limited to the warranties of merchantability,
+ * fitness for a particular purpose and noninfringement.
+ */
+
 #include "hmc5883l.h"
 
 
@@ -7,19 +18,16 @@
   * @param uint8_t *: pointer to uint8_t, where value of CRA will be saved
  */
 static HMC5883L_STATUS hmc5883l_get_cra(HMC5883L *hmc5883l, uint8_t *cra) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Read(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x00,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) cra,
+        cra,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_READ_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_READ_ERR;
 }
 
 
@@ -29,19 +37,16 @@ static HMC5883L_STATUS hmc5883l_get_cra(HMC5883L *hmc5883l, uint8_t *cra) {
   * @param uint8_t: integer with desired value of CRA
  */
 static HMC5883L_STATUS hmc5883l_set_cra(HMC5883L *hmc5883l, uint8_t cra) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Write(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Write(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x00,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) &cra,
+        &cra,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_WRITE_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_WRITE_ERR;
 }
 
 
@@ -51,19 +56,16 @@ static HMC5883L_STATUS hmc5883l_set_cra(HMC5883L *hmc5883l, uint8_t cra) {
   * @param uint8_t *: pointer to uint8_t, where value of CRB will be saved
  */
 static HMC5883L_STATUS hmc5883l_get_crb(HMC5883L *hmc5883l, uint8_t *crb) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Read(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x01,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) crb,
+        crb,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_READ_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_READ_ERR;
 }
 
 
@@ -73,19 +75,16 @@ static HMC5883L_STATUS hmc5883l_get_crb(HMC5883L *hmc5883l, uint8_t *crb) {
   * @param uint8_t: integer with desired value of CRB
  */
 static HMC5883L_STATUS hmc5883l_set_crb(HMC5883L *hmc5883l, uint8_t crb) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Write(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Write(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x01,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) &crb,
+        &crb,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_WRITE_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_WRITE_ERR;
 }
 
 
@@ -95,19 +94,16 @@ static HMC5883L_STATUS hmc5883l_set_crb(HMC5883L *hmc5883l, uint8_t crb) {
   * @param uint8_t *: pointer to uint8_t, where value of MR will be saved
  */
 static HMC5883L_STATUS hmc5883l_get_mr(HMC5883L *hmc5883l, uint8_t *mr) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Read(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x02,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) mr,
+        mr,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_READ_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_READ_ERR;
 }
 
 
@@ -117,19 +113,16 @@ static HMC5883L_STATUS hmc5883l_get_mr(HMC5883L *hmc5883l, uint8_t *mr) {
   * @param uint8_t: integer with desired value of MR
  */
 static HMC5883L_STATUS hmc5883l_set_mr(HMC5883L *hmc5883l, uint8_t mr) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Write(
+    const HAL_StatusTypeDef ret = HAL_I2C_Mem_Write(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x02,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) &mr,
+        &mr,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_WRITE_ERR;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_WRITE_ERR;
 }
 
 
@@ -139,44 +132,16 @@ static HMC5883L_STATUS hmc5883l_set_mr(HMC5883L *hmc5883l, uint8_t mr) {
   * @param uint8_t *: pointer to uint8_t, where value of SR will be saved
  */
 static HMC5883L_STATUS hmc5883l_get_sr(HMC5883L *hmc5883l, uint8_t *sr) {
-    HAL_StatusTypeDef ret;
-    ret = HAL_I2C_Mem_Read(
+    HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(
         hmc5883l->i2c_bus,
         (hmc5883l->addr) << 1,
         0x09,
         I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) sr,
+        sr,
         1,
         100
     );
-    if (ret != HAL_OK)
-        return HMC5883L_READ_ERR;
-    return HMC5883L_OK;
-}
-
-
-HMC5883L_STATUS hmc5883l_reset_mr7(HMC5883L *hmc5883l) {
-    HMC5883L_STATUS ret;
-    uint8_t mr;
-    ret = hmc5883l_get_mr(hmc5883l, &mr);
-    if (ret != HMC5883L_OK)
-        return ret;
-    mr = mr & 0b01111111;
-    ret = hmc5883l_set_mr(hmc5883l, mr);
-    if (ret != HMC5883L_OK)
-        return ret;
-    return HMC5883L_OK;
-}
-
-
-HMC5883L_STATUS hmc5883l_get_mr7(HMC5883L *hmc5883l, uint8_t *mr7_is_set) {
-    HMC5883L_STATUS ret;
-    uint8_t mr;
-    ret = hmc5883l_get_mr(hmc5883l, &mr);
-    if (ret != HMC5883L_OK)
-        return ret;
-    *mr7_is_set = (mr & 0b10000000) != 0? 1: 0;
-    return HMC5883L_OK;
+    return (ret == HAL_OK) ? HMC5883L_OK : HMC5883L_READ_ERR;
 }
 
 
@@ -187,50 +152,39 @@ HMC5883L_STATUS hmc5883l_init(HMC5883L *hmc5883l, I2C_HandleTypeDef *i2c_bus, ui
     uint8_t buf[3];
 
     /* Check identification registers */
-    ret = HAL_I2C_Mem_Read(
-        hmc5883l->i2c_bus,
-        (hmc5883l->addr) << 1,
-        0x0A,
-        I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) buf,
-        3,
-        100
-    );
-    if (ret != HAL_OK)
-        return HMC5883L_NORESPONSE;
-    if (buf[0] != 'H' || buf[1] != '4' || buf[2] != '3')
-        return HMC5883L_NOTFOUND;
+    if (
+        HAL_I2C_Mem_Read(
+            hmc5883l->i2c_bus,
+            (hmc5883l->addr) << 1,
+            0x0A,
+            I2C_MEMADD_SIZE_8BIT,
+            buf,
+            3,
+            100
+        ) != HAL_OK
+    ) return HMC5883L_NORESPONSE;
+    if (buf[0] != 'H' || buf[1] != '4' || buf[2] != '3') return HMC5883L_NOTFOUND;
 
     /* Reset bits in registers, see datasheet */
     HMC5883L_STATUS cret;
     uint8_t reg;
     cret = hmc5883l_get_cra(hmc5883l, &reg);
-    if (cret != HMC5883L_OK)
-        return cret;
-    reg = reg & 0b01111111;
+    if (cret != HMC5883L_OK) return cret;
+    reg = reg & ~(1 << 7); /* Clean cra[7] */
     cret = hmc5883l_set_cra(hmc5883l, reg);
-    if (cret != HMC5883L_OK)
-        return cret;
+    if (cret != HMC5883L_OK) return cret;
 
     cret = hmc5883l_get_crb(hmc5883l, &reg);
-    if (cret != HMC5883L_OK)
-        return cret;
-    reg = reg & 0b11100000;
+    if (cret != HMC5883L_OK) return cret;
+    reg = reg & 0b11100000; /* Clean crb[0] - crb[4] */
     cret = hmc5883l_set_crb(hmc5883l, reg);
-    if (cret != HMC5883L_OK)
-        return cret;
+    if (cret != HMC5883L_OK) return cret;
 
     cret = hmc5883l_get_mr(hmc5883l, &reg);
-    if (cret != HMC5883L_OK)
-        return cret;
-    reg = reg & 0b10000011;
+    if (cret != HMC5883L_OK) return cret;
+    reg = reg & 0b00000011; /* Clean mr[2] - mr[7] */
     cret = hmc5883l_set_mr(hmc5883l, reg);
-    if (cret != HMC5883L_OK)
-        return cret;
-
-    cret = hmc5883l_reset_mr7(hmc5883l);
-    if (cret != HMC5883L_OK)
-        return cret;
+    if (cret != HMC5883L_OK) return cret;
 
     return HMC5883L_OK;
 }
@@ -373,19 +327,18 @@ HMC5883L_STATUS hmc5883l_set_operating_mode(HMC5883L *hmc5883l, uint8_t mode) {
 
 HMC5883L_STATUS hmc5883l_read(HMC5883L* hmc5883l) {
     uint8_t buf[6];
-    HAL_StatusTypeDef ret;
 
-    ret = HAL_I2C_Mem_Read(
-        hmc5883l->i2c_bus,
-        (hmc5883l->addr) << 1,
-        0x03,
-        I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *) buf,
-        6,
-        100
-    );
-    if (ret != HAL_OK)
-        return HMC5883L_READ_ERR;
+    if (
+        HAL_I2C_Mem_Read(
+            hmc5883l->i2c_bus,
+            (hmc5883l->addr) << 1,
+            0x03,
+            I2C_MEMADD_SIZE_8BIT,
+            (uint8_t *) buf,
+            6,
+            100
+        ) != HAL_OK
+    ) return HMC5883L_READ_ERR;
     hmc5883l->x = (int16_t) ((buf[0] << 8) | buf[1]);
     hmc5883l->z = (int16_t) ((buf[2] << 8) | buf[3]);
     hmc5883l->y = (int16_t) ((buf[4] << 8) | buf[5]);
@@ -398,8 +351,7 @@ HMC5883L_STATUS hmc5883l_is_ready(HMC5883L *hmc5883l, uint8_t *is_ready) {
     uint8_t sr;
     HMC5883L_STATUS ret;
     ret = hmc5883l_get_sr(hmc5883l, &sr);
-    if (ret != HMC5883L_OK)
-        return ret;
+    if (ret != HMC5883L_OK) return ret;
     *is_ready = (sr & 0b00000001) != 0? 1: 0;
     return HMC5883L_OK;
 }
@@ -409,9 +361,8 @@ HMC5883L_STATUS hmc5883l_is_locked(HMC5883L *hmc5883l, uint8_t *is_locked) {
     uint8_t sr;
     HMC5883L_STATUS ret;
     ret = hmc5883l_get_sr(hmc5883l, &sr);
-    if (ret != HMC5883L_OK)
-        return ret;
-    *is_locked = (sr & 0b00000010) != 0? 1: 0;
+    if (ret != HMC5883L_OK) return ret;
+    *is_locked = (sr & 0b00000010) != 0 ? 1: 0;
     return HMC5883L_OK;
 }
 
@@ -419,17 +370,16 @@ HMC5883L_STATUS hmc5883l_is_locked(HMC5883L *hmc5883l, uint8_t *is_locked) {
 
 HMC5883L_STATUS hmc5883l_wait_ready(HMC5883L *hmc5883l, uint8_t timeout_ms) {
     HMC5883L_STATUS ret;
-    uint8_t is_ready = 0, dt = 1;
+    uint8_t is_ready = 0;
+    const uint8_t dt = 1;
     uint8_t curr_time = 0;
-    do {
+    while (!is_ready) {
         ret = hmc5883l_is_ready(hmc5883l, &is_ready);
-        if (ret != HMC5883L_OK)
-            return ret;
+        if (ret != HMC5883L_OK) return ret;
         HAL_Delay(dt);
         curr_time += dt;
-        if (curr_time >= timeout_ms)
-            return HMC5883L_TIMEOUT_ERR;
-    } while (!is_ready);
+        if (curr_time >= timeout_ms) return HMC5883L_TIMEOUT_ERR;
+    }
     return HMC5883L_OK;
 }
 
@@ -437,25 +387,16 @@ HMC5883L_STATUS hmc5883l_wait_ready(HMC5883L *hmc5883l, uint8_t timeout_ms) {
 HMC5883L_STATUS hmc5883l_single_measurement(HMC5883L *hmc5883l) {
     HMC5883L_STATUS ret;
     ret = hmc5883l_set_operating_mode(hmc5883l, 1U);
-    if (ret != HMC5883L_OK)
-        return ret;
+    if (ret != HMC5883L_OK) return ret;
     ret = hmc5883l_wait_ready(hmc5883l, 100);
-    if (ret != HMC5883L_OK)
-        return ret;
-    ret = hmc5883l_read(hmc5883l);
-    if (ret != HMC5883L_OK)
-        return ret;
-    return HMC5883L_OK;
+    if (ret != HMC5883L_OK) return ret;
+    return hmc5883l_read(hmc5883l);
 }
 
 
 HMC5883L_STATUS hmc5883l_continuous_measurement(HMC5883L *hmc5883l) {
     HMC5883L_STATUS ret;
     ret = hmc5883l_wait_ready(hmc5883l, 100);
-    if (ret != HMC5883L_OK)
-        return ret;
-    ret = hmc5883l_read(hmc5883l);
-    if (ret != HMC5883L_OK)
-        return ret;
-    return HMC5883L_OK;
+    if (ret != HMC5883L_OK) return ret;
+    return hmc5883l_read(hmc5883l);
 }

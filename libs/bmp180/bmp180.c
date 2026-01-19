@@ -347,7 +347,7 @@ BMP180_STATUS bmp180_get_temperature(BMP180 *bmp180) {
 
 BMP180_STATUS bmp180_get_pressure(BMP180 *bmp180) {
     I2CStatus i2c_ret;
-    uint8_t reg = (bmp180->oss << BMP180_OSS_LSB_BIT) | BMP180_PRES_MEAS_VAL;
+    uint8_t reg = (bmp180->oss << BMP180_OSS_LS_BIT) | BMP180_PRES_MEAS_VAL;
     uint8_t buf[3];
 
     i2c_ret = i2c_write(
