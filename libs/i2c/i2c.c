@@ -93,7 +93,7 @@ I2CStatus i2c_write(
     const uint16_t num_bytes,
     const uint32_t timeout
 ) {
-    if (num_bytes >= sizeof(buffer)) return I2C_ERR;
+    if (num_bytes >= WRITE_BUFFER_SIZE) return I2C_ERR;
     uint8_t write_buf[WRITE_BUFFER_SIZE];
     write_buf[0] = mem_address;
     for (size_t ptr = 0; ptr < num_bytes; ptr++) {
