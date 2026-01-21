@@ -1,6 +1,6 @@
 # BMP180 Sensor Library
 
-A C library for the **BMP180** barometric pressure and temperature sensor. This driver provides high-level functions for data acquisition and implements the manufacturer's complex compensation algorithms for high-precision results.
+A C library for the **Bosch BMP180** barometric pressure and temperature sensor. This driver provides high-level functions for data acquisition and implements the manufacturer's complex compensation algorithms for high-precision results.
 
 It is designed to be used in conjunction with the I2C Abstraction Layer, ensuring seamless portability between **STM32** and **ESP32** platforms.
 

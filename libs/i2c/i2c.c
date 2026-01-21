@@ -1,3 +1,14 @@
+/**
+ * @file i2c.c
+ * @brief Universal I2C master-mode driver for STM32 and ESP32 microcontrollers.
+ * @author Andrei Ruslantsev
+ * @copyright (c) 2026 Andrei Ruslantsev. All rights reserved.
+ * 
+ * This software is provided "as is", without warranty of any kind, express or
+ * implied, including but not limited to the warranties of merchantability,
+ * fitness for a particular purpose and noninfringement.
+ */
+
 #include "i2c.h"
 
 
@@ -82,7 +93,7 @@ I2CStatus i2c_write(
     const uint16_t num_bytes,
     const uint32_t timeout
 ) {
-    if (num_bytes >= sizeof(buffer)) return I2C_ERR;
+    if (num_bytes >= WRITE_BUFFER_SIZE) return I2C_ERR;
     uint8_t write_buf[WRITE_BUFFER_SIZE];
     write_buf[0] = mem_address;
     for (size_t ptr = 0; ptr < num_bytes; ptr++) {

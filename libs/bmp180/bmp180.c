@@ -1,3 +1,14 @@
+/**
+ * @file bmp180.c
+ * @brief Driver implementation for the Bosch BMP180 Barometric Temperature and Pressure Sensor.
+ * @author Andrei Ruslantsev
+ * @copyright (c) 2026 Andrei Ruslantsev. All rights reserved.
+ * 
+ * This software is provided "as is", without warranty of any kind, express or
+ * implied, including but not limited to the warranties of merchantability,
+ * fitness for a particular purpose and noninfringement.
+ */
+
 #include "bmp180.h"
 
 
@@ -317,7 +328,7 @@ BMP180_STATUS bmp180_get_temperature(BMP180 *bmp180) {
         delay_ms(BMP180_MEAS_TIMEOUT_MS);
         if (retry > BMP180_MAX_RETRIES) return BMP180_TIMEOUT_ERR;
         retry++;
-    } while (buf[0] & (1 << BMP180_SCO_BIT));
+    } while (buf[0] & (1U << BMP180_SCO_POSITION));
 
     i2c_ret = i2c_read(
         bmp180->i2c_bus,
@@ -336,7 +347,7 @@ BMP180_STATUS bmp180_get_temperature(BMP180 *bmp180) {
 
 BMP180_STATUS bmp180_get_pressure(BMP180 *bmp180) {
     I2CStatus i2c_ret;
-    uint8_t reg = (bmp180->oss << BMP180_OSS_LSB_BIT) | BMP180_PRES_MEAS_VAL;
+    uint8_t reg = (bmp180->oss << BMP180_OSS_POSITION) & BMP180_OSS_MASK | BMP180_PRES_MEAS_VAL;
     uint8_t buf[3];
 
     i2c_ret = i2c_write(
@@ -364,7 +375,7 @@ BMP180_STATUS bmp180_get_pressure(BMP180 *bmp180) {
         delay_ms(BMP180_MEAS_TIMEOUT_MS);
         if (retry > BMP180_MAX_RETRIES) return BMP180_TIMEOUT_ERR;
         retry++;
-    } while (buf[0] & (1 << BMP180_SCO_BIT));
+    } while (buf[0] & (1U << BMP180_SCO_POSITION));
 
     i2c_ret = i2c_read(
         bmp180->i2c_bus,
@@ -382,8 +393,7 @@ BMP180_STATUS bmp180_get_pressure(BMP180 *bmp180) {
 
 
 BMP180_STATUS bmp180_get_all(BMP180 *bmp180) {
-    const BMP180_STATUS status_temperature = bmp180_get_temperature(bmp180);
-    const BMP180_STATUS status_pressure = bmp180_get_pressure(bmp180);
-    if (status_pressure != BMP180_OK || status_temperature != BMP180_OK) return BMP180_READ_ERR;
-    return BMP180_OK;
+    BMP180_STATUS status = bmp180_get_temperature(bmp180);
+    if (status != BMP180_OK) return status;
+    return bmp180_get_pressure(bmp180);
 }
