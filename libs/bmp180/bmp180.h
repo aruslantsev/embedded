@@ -221,8 +221,10 @@ BMP180_STATUS bmp180_get_all(BMP180 *bmp180);
 
 #define BMP180_RST_VAL          0xB6
 
-#define BMP180_SCO_BIT          5
-#define BMP180_OSS_LS_BIT       6 /* Bits 6 and 7,  zero indexed */
+
+#define BMP180_SCO_POSITION     5
+#define BMP180_OSS_MASK         0b11000000
+#define BMP180_OSS_POSITION     6 /* Bits 6 and 7,  zero indexed */
 
 #define BMP180_TEMP_MEAS_VAL    0x2E
 #define BMP180_PRES_MEAS_VAL    0x34
