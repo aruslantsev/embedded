@@ -44,4 +44,3 @@ void app_main(void)
     }
 
 }
-#define STM32H5
